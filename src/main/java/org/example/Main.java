@@ -16,7 +16,7 @@ import static org.example.optimization.AlgorithmFactory.generarParametrosBaseGus
 public class Main {
     public static void main(String[] args)  throws Exception {
         System.out.println("Hello world!");
-        final MyMap mapFromJson = newMapGenerate(MapHelper.MAP_BERLIN52_JSON);
+        final MyMap mapFromJson = newMapGenerate(MapHelper.MAP_ATT532_JSON);
         mapFromJson.computarCandidatos(Parameters.CANDIDATES_LENGTH);
         AntColonyAlgorithm algoritmoBase = generarParametrosBaseGustavo(mapFromJson);
         algoritmoBase.process();

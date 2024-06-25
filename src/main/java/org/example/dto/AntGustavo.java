@@ -1,11 +1,11 @@
 package org.example.dto;
+
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+
 @Getter
 public class AntGustavo {
     private List<Integer> rutaSeguida;
@@ -19,13 +19,16 @@ public class AntGustavo {
         this.mapa = mapa;
         this.engine = engine;
         this.largo = mapa.getDistancesMap().length;
-        this.visitadas = new ArrayList<>(IntStream.range(0, largo).mapToObj(i -> false).collect(Collectors.toList()));
+        this.visitadas = new ArrayList<>(largo);
         this.rutaSeguida = new ArrayList<>();
-
-        this.idCiudadActual = engine.nextInt(largo);
+        for (int i = 0; i < largo; i++) {
+            this.visitadas.add(false);
+        }
+        this.idCiudadActual = 0;  // Comenzar siempre desde la ciudad 0
         this.visitadas.set(this.idCiudadActual, true);
         this.rutaSeguida.add(this.idCiudadActual);
     }
+
     public int[] getRutaSeguidaArray() {
         int[] rutaArray = new int[rutaSeguida.size()];
         for (int i = 0; i < rutaSeguida.size(); i++) {
@@ -33,7 +36,8 @@ public class AntGustavo {
         }
         return rutaArray;
     }
-    public int mover() {
+
+    public boolean mover() {
         List<Integer> noVisitadas = new ArrayList<>();
         List<Double> probabilidad = new ArrayList<>();
 
@@ -44,7 +48,7 @@ public class AntGustavo {
             }
         }
 
-        if (noVisitadas.isEmpty()) return 0;
+        if (noVisitadas.isEmpty()) return false;
 
         double[] probabilities = probabilidad.stream().mapToDouble(d -> d).toArray();
         int nuevaCiudad = noVisitadas.get(sampleIndexBasedOnProbability(probabilities, engine));
@@ -53,7 +57,7 @@ public class AntGustavo {
         rutaSeguida.add(nuevaCiudad);
         visitadas.set(nuevaCiudad, true);
 
-        return 1;
+        return true;
     }
 
     public void mostrarRuta() {

@@ -15,26 +15,21 @@ public class AntColonyGustavo implements AntColonyAlgorithm {
     private final MyMap map;
     private Tour bestTour = null;
     private final List<Tour> colony = new ArrayList<>();
+    private final int[][] pheromone;
     public AntColonyGustavo(final MyMap map) {
+
         this.map = map;
+        this.pheromone =  new int[map.getLength()][map.getLength()];
     }
 
     @Override
     public void process() {
         Random engine = new Random();
         for (int i = 0; i < ANT_COLONY_LENGTH; i++) {
-            AntGustavo ant = new AntGustavo(map,engine);
-            while (ant.mover()>0);
+            AntGustavo ant = new AntGustavo(map, engine);
+            while (ant.mover());
             int[] ruta = ant.getRutaSeguidaArray();
-            List<Integer> faltantes = findMissingNumbers(ruta);
-            Node[] nodeRoute = createTour(map,ruta);
-            NodeHalpers nodeHelper = new NodeHalpers();
-            boolean conexa = nodeHelper.isConexa(nodeRoute);
-
-            if(!conexa){
-                System.out.println("error");
-                break;
-            }
+            Node[] nodeRoute = createTour(map, ruta);
             Tour newTour = new Tour(nodeRoute, map);
             newTour.findOptimalSolution(bestTour);
             if (bestTour == null || newTour.getRouteCost() < bestTour.getRouteCost()) {
@@ -44,8 +39,14 @@ public class AntColonyGustavo implements AntColonyAlgorithm {
         }
     }
 
+
     @Override
     public void processThreads() {
+
+    }
+
+    @Override
+    public void calculatePheromone() {
 
     }
 
@@ -89,7 +90,7 @@ public class AntColonyGustavo implements AntColonyAlgorithm {
 
         return nodes; // Devolver el arreglo de nodos generado
     }
-    public static Node[]  createTour(final MyMap map, final int[] route) {
+    public static Node[] createTour(final MyMap map, final int[] route) {
         Node[] nodesRoute = new Node[route.length];
         Node nextNode = null;
         for (int i = 0; i < route.length - 1; i++) {
@@ -108,20 +109,30 @@ public class AntColonyGustavo implements AntColonyAlgorithm {
         nodesRoute[0].previous = nextNode;
         return nodesRoute;
     }
-    private static List<Integer> findMissingNumbers(int[] inputArray) {
-        Set<Integer> inputSet = new HashSet<>();
+    public static Map<String, List<Integer>> findMissingAndDuplicateNumbers(int[] inputArray) {
+        // Usamos un Map para contar las ocurrencias de cada número
+        Map<Integer, Integer> countMap = new HashMap<>();
         for (int num : inputArray) {
-            inputSet.add(num);
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
         }
 
         List<Integer> missingNumbers = new ArrayList<>();
+        List<Integer> duplicateNumbers = new ArrayList<>();
 
+        // Encontrar los números faltantes y duplicados
         for (int i = 0; i <= 52; i++) {
-            if (!inputSet.contains(i)) {
+            if (!countMap.containsKey(i)) {
                 missingNumbers.add(i);
+            } else if (countMap.get(i) > 1) {
+                duplicateNumbers.add(i);
             }
         }
 
-        return missingNumbers;
+        // Crear un Map para retornar ambas listas
+        Map<String, List<Integer>> result = new HashMap<>();
+        result.put("missingNumbers", missingNumbers);
+        result.put("duplicateNumbers", duplicateNumbers);
+
+        return result;
     }
 }

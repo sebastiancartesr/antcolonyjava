@@ -62,6 +62,12 @@ public class AntColony implements AntColonyAlgorithm {
             executor.shutdown();
         }
     }
+
+    @Override
+    public void calculatePheromone() {
+
+    }
+
     @Override
     public void result() {
         System.out.println("Colonias");

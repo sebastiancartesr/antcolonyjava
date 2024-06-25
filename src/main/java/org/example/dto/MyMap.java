@@ -43,27 +43,32 @@ public class MyMap {
     }
 
     //computar tipo gustavo
-    public List<List<Double>> computarProbabilidades( int[][] data) {
+    public List<List<Double>> computarProbabilidades(int[][] data) {
+        // Obtiene la cantidad de filas (o columnas) de la matriz de datos
         int n = data.length;
+        // Crea una lista de listas para almacenar las probabilidades iniciales
         probabilidadInicial = new ArrayList<>(n);
-
+        // Inicializa la matriz de probabilidades con ceros
         for (int i = 0; i < n; i++) {
             probabilidadInicial.add(new ArrayList<>(n));
             for (int j = 0; j < n; j++) {
                 probabilidadInicial.get(i).add(0.0);
             }
         }
-
+        // Calcula las probabilidades basadas en los datos de entrada
         for (int i = 0; i < n - 1; i++) {
             for (int j = i + 1; j < n; j++) {
+                // Calcula la probabilidad entre el nodo i y el nodo j
                 double p = 1.0 / Math.pow(data[i][j], Parameters.GAMMA);
+                // Asigna la probabilidad calculada a las posiciones correspondientes en la matriz
                 probabilidadInicial.get(i).set(j, p);
                 probabilidadInicial.get(j).set(i, p);
             }
         }
-
+        // Retorna la matriz de probabilidades calculadas
         return probabilidadInicial;
     }
+
     public void computarCandidatos(int TAMVEC) {
         int n = distancesMap.length;
         candidatosDeNodo = new ArrayList<>(n);
